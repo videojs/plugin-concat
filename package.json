@@ -77,6 +77,8 @@
     ]
   },
   "dependencies": {
+    "@videojs/http-streaming": "^1.11.1",
+    "@videojs/vhs-utils": "^1.0.0",
     "global": "^4.3.2",
     "video.js": "^6 || ^7"
   },
