@@ -77,9 +77,10 @@
     ]
   },
   "dependencies": {
-    "@videojs/http-streaming": "^1.11.1",
     "@videojs/vhs-utils": "^1.0.0",
     "global": "^4.3.2",
+    "m3u8-parser": "^4.4.0",
+    "mpd-parser": "^0.8.1",
     "video.js": "^6 || ^7"
   },
   "devDependencies": {

@@ -465,7 +465,6 @@ QUnit.test('makes requests for unresolved playlists', function(assert) {
             discontinuitySequence: 0,
             discontinuityStarts: [],
             endList: true,
-            id: 0,
             playlistType: 'VOD',
             uri: 'p2',
             resolvedUri: 'p2',

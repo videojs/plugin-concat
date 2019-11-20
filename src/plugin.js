@@ -1,12 +1,12 @@
 import videojs from 'video.js';
-import {version as VERSION} from '../package.json';
+import { version as VERSION } from '../package.json';
+import { concatenateVideos } from './concatenate';
 
 // Default options for the plugin.
 const defaults = {};
 
 // Cross-compatibility for Video.js 5 and 6.
 const registerPlugin = videojs.registerPlugin || videojs.plugin;
-// const dom = videojs.dom || videojs;
 
 /**
  * Function to invoke when the player is ready.
@@ -43,6 +43,8 @@ const concat = function(options) {
     onPlayerReady(this, videojs.mergeOptions(defaults, options));
   });
 };
+
+concat.concatenateVideos = concatenateVideos;
 
 // Register the plugin with video.js.
 registerPlugin('concat', concat);

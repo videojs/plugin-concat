@@ -113,3 +113,34 @@ QUnit.test('DASH manifest segment lists are resolved', function(assert) {
     'resolved segment list'
   );
 });
+
+QUnit.test('HLS media manifest has attributes property added', function(assert) {
+  const manifestObject = parseManifest({
+    url: 'http://test.com',
+    manifestString: hlsMediaPlaylist({}),
+    mimeType: 'application/x-mpegURL'
+  });
+
+  assert.notOk(manifestObject.playlists, 'no playlists');
+  assert.ok(manifestObject.attributes, 'has attributes property');
+});
+
+QUnit.test('HLS media manifest segments have resolvedUri properties', function(assert) {
+  const manifestObject = parseManifest({
+    url: 'http://test.com',
+    manifestString: hlsMediaPlaylist({}),
+    mimeType: 'application/x-mpegURL'
+  });
+
+  assert.notOk(manifestObject.playlists, 'no playlists');
+  assert.equal(
+    manifestObject.segments.length,
+    1,
+    'resolved segment list'
+  );
+  assert.equal(
+    manifestObject.segments[0].resolvedUri,
+    'http://test.com/0.ts',
+    'added resolvedUri property to segment'
+  );
+});
