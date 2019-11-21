@@ -35,17 +35,33 @@ export const hlsMediaPlaylist = ({
   numSegments = 1,
   segmentPrefix = '',
   segmentDuration = 10,
-  targetDuration = 10
+  targetDuration = 10,
+  keyUri = '',
+  mapUri = ''
 }) => {
   const segments = [];
 
   for (let i = 0; i < numSegments; i++) {
     const segmentPath = `${segmentPrefix}${i}.ts`;
+    let segmentLines = '';
 
-    segments.push(`
+    if (keyUri) {
+      segmentLines += `
+        #EXT-X-KEY:METHOD=AES-128,URI="${keyUri}"
+      `;
+    }
+    if (mapUri) {
+      segmentLines += `
+        #EXT-X-MAP:URI="${mapUri}"
+      `;
+    }
+
+    segmentLines += `
       #EXTINF:${segmentDuration}
       ${segmentPath}
-    `);
+    `;
+
+    segments.push(segmentLines);
   }
 
   return `

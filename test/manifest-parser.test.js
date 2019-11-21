@@ -144,3 +144,26 @@ QUnit.test('HLS media manifest segments have resolvedUri properties', function(a
     'added resolvedUri property to segment'
   );
 });
+
+QUnit.test('HLS key and map URIs are resolved', function(assert) {
+  const manifestObject = parseManifest({
+    url: 'http://test.com',
+    manifestString: hlsMediaPlaylist({
+      keyUri: 'key.php',
+      mapUri: 'init.mp4'
+    }),
+    mimeType: 'application/x-mpegURL'
+  });
+
+  assert.equal(manifestObject.segments.length, 1, 'one segment');
+  assert.equal(
+    manifestObject.segments[0].key.resolvedUri,
+    'http://test.com/key.php',
+    'resolved key uri'
+  );
+  assert.equal(
+    manifestObject.segments[0].map.resolvedUri,
+    'http://test.com/init.mp4',
+    'resolved map uri'
+  );
+});
