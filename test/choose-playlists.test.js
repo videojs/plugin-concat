@@ -74,6 +74,27 @@ QUnit.test(
 
 QUnit.module('chooseAudioPlaylists');
 
+QUnit.test('throws error if mismatching number of playlists', function(assert) {
+  const manifestObject1 = {
+    mediaGroups: {
+      AUDIO: {
+        audio1: {
+          en: { default: true, resolvedUri: 'resolved-uri-1' },
+          es: { default: false, resolvedUri: 'resolved-uri' }
+        }
+      }
+    }
+  };
+  const videoPlaylist1 = { attributes: { AUDIO: 'audio1' } };
+  const videoPlaylist2 = { attributes: { AUDIO: 'audio1' } };
+
+  assert.throws(
+    () => chooseAudioPlaylists([manifestObject1], [videoPlaylist1, videoPlaylist2]),
+    /Invalid number of video playlists for provided manifests/,
+    'threw error for mismatched number of playlists'
+  );
+});
+
 QUnit.test('chooses default audio playlists for video playlists', function(assert) {
   const audioPlaylist2Resolved = { test: 'case' };
   const audioPlaylist1 = { default: true, resolvedUri: 'resolved-uri-1' };

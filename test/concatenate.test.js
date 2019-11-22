@@ -45,6 +45,89 @@ QUnit.module('concatenate-videos', {
   }
 });
 
+QUnit.test('calls back with error when not enough supported playlists', function(assert) {
+  const done = assert.async();
+  const manifests = [{
+    url: '/manifest1.m3u8',
+    mimeType: 'application/vnd.apple.mpegurl'
+  }, {
+    url: '/manifest2.m3u8',
+    mimeType: 'application/x-mpegurl'
+  }];
+  const masterWithUnsupportedMedia = hlsMasterPlaylist({ codecs: 'unsupported' });
+
+  this.server.respondWith(
+    'GET',
+    manifests[0].url,
+    [200, STANDARD_HEADERS, hlsMasterPlaylist({})]
+  );
+  this.server.respondWith(
+    'GET',
+    manifests[1].url,
+    [200, STANDARD_HEADERS, masterWithUnsupportedMedia]
+  );
+
+  concatenateVideosPromise({
+    manifests,
+    targetVideoResolution: 720
+  }).then((sourceObject) => {
+    assert.ok(false, 'should not call back without error');
+    done();
+  }).catch((e) => {
+    assert.equal(
+      e.message,
+      'Did not find a supported playlist for each manifest',
+      'called back with error'
+    );
+    done();
+  });
+});
+
+QUnit.test('calls back with error when playlist request fails', function(assert) {
+  const done = assert.async();
+  const manifests = [{
+    url: '/manifest1.m3u8',
+    mimeType: 'application/vnd.apple.mpegurl'
+  }, {
+    url: '/manifest2.m3u8',
+    mimeType: 'application/x-mpegurl'
+  }, {
+    url: '/manifest3.m3u8',
+    mimeType: 'application/x-mpegurl'
+  }];
+
+  this.server.respondWith(
+    'GET',
+    manifests[0].url,
+    [200, STANDARD_HEADERS, hlsMediaPlaylist({})]
+  );
+  this.server.respondWith(
+    'GET',
+    manifests[1].url,
+    [500, STANDARD_HEADERS, hlsMediaPlaylist({})]
+  );
+  this.server.respondWith(
+    'GET',
+    manifests[2].url,
+    [200, STANDARD_HEADERS, hlsMediaPlaylist({})]
+  );
+
+  concatenateVideosPromise({
+    manifests,
+    targetVideoResolution: 720
+  }).then((sourceObject) => {
+    assert.ok(false, 'should not call back without error');
+    done();
+  }).catch((e) => {
+    assert.equal(
+      e.message,
+      'Request failed',
+      'called back with error'
+    );
+    done();
+  });
+});
+
 QUnit.test('concatenates multiple videos into one', function(assert) {
   const done = assert.async();
   const manifests = [{

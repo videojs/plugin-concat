@@ -1,16 +1,18 @@
 export const hlsMasterPlaylist = ({
   numPlaylists = 1,
   playlistPrefix = 'playlist',
-  includeDemuxedAudio = false
+  includeDemuxedAudio = false,
+  codecs = ''
 }) => {
   const playlists = [];
 
   for (let i = 0; i < numPlaylists; i++) {
     const playlistPath = `${playlistPrefix}${i}.m3u8`;
     const audioAttribute = includeDemuxedAudio ? ',AUDIO="audio"' : '';
+    const codecsAttribute = codecs ? ',CODECS="${codecs}"' : '';
 
     playlists.push(`
-      #EXT-X-STREAM-INF:BANDWIDTH=${100 + i}${audioAttribute}
+      #EXT-X-STREAM-INF:BANDWIDTH=${100 + i}${audioAttribute}${codecsAttribute}
       ${playlistPath}
     `);
   }
