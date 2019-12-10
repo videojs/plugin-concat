@@ -27,10 +27,10 @@ export const removeUnsupportedPlaylists = (manifestObjects) => {
   // remove audio and video only playlists, as well as playlists with video codecs not
   // supported by the browser
   return manifestObjects.map((manifestObject) => {
-    // Recreate the map for each manifest, as if it is reused for different manifests, and
-    // they each contain the same playlist (or one is a media and another is a master
-    // containing that media), then the information may be different depending on the
-    // manifest (e.g., one may have demuxed audio, the other video only).
+    // Recreate the map for each manifest. This is needed since, if the map is reused for
+    // different manifests, and they each contain the same playlist (or one is a media and
+    // another is a master containing that media), then the information may be different
+    // depending on the manifest (e.g., one may have demuxed audio, the other video only).
     const playlistToCodecsMap = codecsForPlaylists(manifestObject);
     // handle master and media playlists
     const playlists =

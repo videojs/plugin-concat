@@ -1,9 +1,9 @@
 import window from 'global/window';
 
 /**
- * Joins the segments of each playlist together into one, with a discontinuity on the
- * start of each new section. Playlist will include basic properties necessary for VHS to
- * play back the playlist.
+ * Joins the segments of multiple playlists together into one playlist, with a
+ * discontinuity separating each set of segments. The resultant playlist includes basic
+ * properties necessary for VHS to play the playlist.
  *
  * @param {Object} config
  *        Object containing arguments
@@ -11,12 +11,12 @@ import window from 'global/window';
  *        An array of playlist objects (in the format used by VHS)
  * @param {string} config.uriSuffix
  *        A suffix to use for the mocked URI of the combined playlist. This is needed when
- *        using demuxed audio, as if the generated URI matches a video playlist's
- *        generated URI, the rendition will be considered audio only by VHS.
+ *        using demuxed audio in VHS, as, if the generated URI matches a video playlist's
+ *        generated URI, the rendition will be considered audio only.
  *
  * @return {Object}
- *          A single playlist containing the combined elements (and joined segments) of
- *          all of the provided playlists
+ *          A single playlist containing the combined elements (and segment arrays) of the
+ *          provided playlists
  */
 export const combinePlaylists = ({ playlists, uriSuffix = '' }) => {
   const combinedSegments = playlists.reduce((acc, playlist) => {
@@ -112,7 +112,7 @@ export const combinePlaylists = ({ playlists, uriSuffix = '' }) => {
  *        Object containing arguments
  * @param {Object} config.videoPlaylist
  *        A video playlist object (in the format used by VHS)
- * @param {Object} config.audioPlaylist
+ * @param {Object} [config.audioPlaylist]
  *        An audio playlist object (in the format used by VHS)
  *
  * @return {Object}

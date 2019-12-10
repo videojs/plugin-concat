@@ -138,13 +138,13 @@ const concatenateManifests = ({ manifests, targetVerticalResolution, callback })
   // audio. VHS assumes (based on how most media streaming formats work) that a rendition
   // will not change how it's playing back audio (whether from muxed as part of the
   // rendition's video segments, or demuxed as segments in an alternate audio playlist),
-  // except due to user interaction (e.g., clicking an alternate audio playlist in the
-  // UI). Therefore, a rendition must maintain a consistent playback scheme (as either
-  // demuxed or muxed) throughout the its entire stream.
+  // except due to a media selection change (e.g., selecting an alternate audio playlist).
+  // Therefore, a rendition must maintain a consistent scheme (either demuxed or muxed)
+  // throughout playback.
   const audioPlaylists = chooseAudioPlaylists(manifestObjects, videoPlaylists);
   const allPlaylists = videoPlaylists.concat(audioPlaylists);
   // To correctly set the mime types for all playlists, we have to use the mime types
-  // provided by the manifests for the associated playlists. Since  videoPlaylists and
+  // provided by the manifests for the associated playlists. Since videoPlaylists and
   // audioPlaylists are associated 1:1, and the manifests to videoPlaylists are 1:1, the
   // manifest mime types may be reused for both.
   const mimeTypes = manifests.map((manifest) => manifest.mimeType);

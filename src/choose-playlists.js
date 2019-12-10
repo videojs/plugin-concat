@@ -1,4 +1,4 @@
-// Bandwidth to use in playlist selects when resolution information is not provided.
+// Bandwidth to use in playlist selection when resolution information is not provided.
 // 0.5 MB/s chosen as it was the default VHS bandwidth to use for the start of the
 // rendition selection algorithm.
 export const DEFAULT_BANDWIDTH = 4194304;
@@ -34,7 +34,7 @@ export const chooseVideoPlaylists = (manifestsPlaylists, targetVerticalResolutio
 
       if (playlist.attributes.RESOLUTION) {
         // If the selected playlist doesn't have resolution information, and this one
-        // does, choose the playlist with resolution info.
+        // does, choose this one.
         if (!acc.attributes.RESOLUTION) {
           return playlist;
         }
@@ -67,8 +67,7 @@ export const chooseVideoPlaylists = (manifestsPlaylists, targetVerticalResolutio
  * same order.
  *
  * Only one audio playlist will be selected for each video playlist, and only if the audio
- * playlist has the DEFAULT attribute set to YES. This means that alternate audio is not
- * supported.
+ * playlist is the DEFAULT. This means that alternate audio is not supported.
  *
  * @param {Object[]} manifestObjects
  *        An array of manifest objects (in the format used by VHS)
