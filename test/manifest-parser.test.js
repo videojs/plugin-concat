@@ -65,6 +65,20 @@ QUnit.test('adds resolvedUri to playlists of a DASH manifest', function(assert) 
   );
 });
 
+QUnit.test('adds resolvedUri to audio playlists of a DASH manifest', function(assert) {
+  const manifestObject = parseManifest({
+    url: 'http://test.com',
+    manifestString: dashPlaylist({}),
+    mimeType: 'application/dash+xml'
+  });
+
+  assert.equal(
+    manifestObject.mediaGroups.AUDIO.audio.main.playlists[0].resolvedUri,
+    'http://test.com-audio-placeholder-audio-main',
+    'added placeholder resolvedUri to audio playlist'
+  );
+});
+
 QUnit.test('HLS master manifest media segment lists are not resolved', function(assert) {
   const manifestObject = parseManifest({
     url: 'http://test.com',

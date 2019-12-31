@@ -81,6 +81,13 @@ export const addPropertiesToMaster = (master) => {
         }
 
         if (mediaProperties.playlists) {
+          if (!mediaProperties.playlists[0].resolvedUri) {
+            // For DASH playlists, where the audio playlists are already resolved, a
+            // resolvedUri needs to exist to act as an identifier. Use a unique
+            // combination across and within manifests to prevent collisions.
+            mediaProperties.playlists[0].resolvedUri =
+              `${master.resolvedUri}-audio-placeholder-${groupKey}-${labelKey}`;
+          }
           mediaProperties.playlists[0].segments.forEach((segment) => {
             resolveSegmentUris(segment, master.uri);
           });
