@@ -38,21 +38,9 @@ QUnit.module('videojs-concat', {
 });
 
 QUnit.test('registers itself with video.js', function(assert) {
-  assert.expect(2);
-
   assert.strictEqual(
     typeof Player.prototype.concat,
     'function',
     'videojs-concat plugin was registered'
-  );
-
-  this.player.concat();
-
-  // Tick the clock forward enough to trigger the player to be "ready".
-  this.clock.tick(1);
-
-  assert.ok(
-    this.player.hasClass('vjs-concat'),
-    'the plugin adds a class to the player'
   );
 });

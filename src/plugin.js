@@ -2,49 +2,37 @@ import videojs from 'video.js';
 import { version as VERSION } from '../package.json';
 import { concatenateVideos } from './concatenate';
 
-// Default options for the plugin.
-const defaults = {};
-
 // Cross-compatibility for Video.js 5 and 6.
 const registerPlugin = videojs.registerPlugin || videojs.plugin;
 
 /**
- * Function to invoke when the player is ready.
+ * Calls back with a single rendition VHS formatted master playlist object given a list of
+ * URLs and their mime types as well as a target vertical resolution.
  *
- * This is a great place for your plugin to initialize itself. When this
- * function is called, the player will have its DOM and child components
- * in place.
+ * As of now, only DASH and HLS are supported.
  *
- * @function onPlayerReady
- * @param    {Player} player
- *           A Video.js player object.
+ * This function will select the closest rendition (absolute value difference) to the
+ * target vertical resolution. If resolution information is not available as part of the
+ * manifest, then it will fall back to the INITIAL_BANDWIDTH config value from VHS.
  *
- * @param    {Object} [options={}]
- *           A plain object containing options for the plugin.
+ * @param {Object} config
+ *        Object containing arguments
+ * @param {ManifestConfig[]} config.manifests
+ *        Array of manifest config objects
+ * @param {number} config.targetVerticalResolution
+ *        The vertical resolution to search for among playlists within each manifest
+ * @param {function(Object, ConcatenationResult)} config.callback
+ *        Callback function with error and result object parameters
  */
-const onPlayerReady = (player, options) => {
-  player.addClass('vjs-concat');
-};
+const concat = (config) => {
+  // When the plugin is registered, the concat function will be called. Ignore that call
+  // and use player.concat(...) as the top level function call.
+  if (!config) {
+    return;
+  }
 
-/**
- * A video.js plugin.
- *
- * In the plugin function, the value of `this` is a video.js `Player`
- * instance. You cannot rely on the player being in a "ready" state here,
- * depending on how the plugin is invoked. This may or may not be important
- * to you; if not, remove the wait for "ready"!
- *
- * @function concat
- * @param    {Object} [options={}]
- *           An object of options left to the plugin author to define.
- */
-const concat = function(options) {
-  this.ready(() => {
-    onPlayerReady(this, videojs.mergeOptions(defaults, options));
-  });
+  concatenateVideos(config);
 };
-
-concat.concatenateVideos = concatenateVideos;
 
 // Register the plugin with video.js.
 registerPlugin('concat', concat);

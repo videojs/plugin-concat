@@ -43,7 +43,7 @@ This is the simplest case. Get the script in whatever way you prefer and include
 <script>
   var player = videojs('my-video');
 
-  player.concat();
+  player.concat(options);
 </script>
 ```
 
@@ -72,7 +72,7 @@ When using with RequireJS (or another AMD library), get the script in whatever w
 require(['video.js', 'videojs-concat'], function(videojs) {
   var player = videojs('my-video');
 
-  player.concat();
+  player.concat(options);
 });
 ```
 
@@ -95,7 +95,7 @@ To use videojs-concat, all that needs to be done is to call the function `videoj
 ### Two of the same DASH source
 
 ```js
-player.concat.concatenateVideos({
+player.concat({
   manifests: [{
     url: 'https://dash.akamaized.net/akamai/bbb_30fps/bbb_30fps.mpd',
     mimeType: 'application/dash+xml'
@@ -121,7 +121,7 @@ player.concat.concatenateVideos({
 ### Two of the same HLS source
 
 ```js
-player.concat.concatenateVideos({
+player.concat({
   manifests: [{
     url: 'https://s3.amazonaws.com/_bc_dml/example-content/bipbop-advanced/bipbop_16x9_variant.m3u8',
     mimeType: 'application/x-mpegURL'
@@ -147,7 +147,7 @@ player.concat.concatenateVideos({
 ### Two of the same demuxed HLS source
 
 ```js
-player.concat.concatenateVideos({
+player.concat({
   manifests: [{
     url: 'http://storage.googleapis.com/shaka-demo-assets/angel-one-hls/hls.m3u8',
     mimeType: 'application/x-mpegURL'
@@ -173,7 +173,7 @@ player.concat.concatenateVideos({
 ### Demuxed HLS and DASH
 
 ```js
-player.concat.concatenateVideos({
+player.concat({
   manifests: [{
     url: 'http://storage.googleapis.com/shaka-demo-assets/angel-one-hls/hls.m3u8',
     mimeType: 'application/x-mpegURL'

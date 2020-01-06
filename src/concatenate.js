@@ -112,12 +112,7 @@ export const resolvePlaylists = ({ playlists, mimeTypes, callback }) => {
  * @throws Will throw if there are incompatibility errors between the playlists
  */
 const concatenateManifests = ({ manifests, targetVerticalResolution, callback }) => {
-  const manifestObjects = manifests.map((manifest) => parseManifest({
-    url: manifest.url,
-    manifestString: manifest.manifestString,
-    mimeType: manifest.mimeType
-  }));
-
+  const manifestObjects = manifests.map(parseManifest);
   const supportedPlaylists = removeUnsupportedPlaylists(manifestObjects);
 
   supportedPlaylists.forEach((playlists) => {
