@@ -1,5 +1,8 @@
 import QUnit from 'qunit';
-import { codecsForPlaylists } from '../src/codecs';
+import {
+  codecsForPlaylists,
+  getAudioAndVideoTypes
+} from '../src/codecs';
 
 QUnit.module('codecsForPlaylists');
 
@@ -151,3 +154,171 @@ QUnit.test(
   }
 );
 
+QUnit.module('getAudioAndVideoTypes');
+
+QUnit.test('gets muxed video and audio mime types and codecs', function(assert) {
+  assert.deepEqual(
+    getAudioAndVideoTypes({
+      videoPlaylists: [
+        { resolvedUri: 'manifest1-playlist2' },
+        { resolvedUri: 'manifest2-playlist1' }
+      ],
+      manifestObjects: [{
+        playlists: [{
+          attributes: { CODECS: 'avc1.42001e, mp4a.40.2' },
+          resolvedUri: 'manifest1-playlist1'
+        }, {
+          attributes: { CODECS: 'avc1.42001f, mp4a.40.5' },
+          resolvedUri: 'manifest1-playlist2'
+        }]
+      }, {
+        playlists: [{
+          attributes: { CODECS: 'avc1.42001e, mp4a.40.2' },
+          resolvedUri: 'manifest2-playlist1'
+        }, {
+          attributes: { CODECS: 'avc1.42001f, mp4a.40.5' },
+          resolvedUri: 'manifest2-playlist2'
+        }]
+      }]
+    }),
+    [
+      {
+        video: 'video/mp4; codecs="avc1.42001f"',
+        audio: 'audio/mp4; codecs="mp4a.40.5"'
+      },
+      {
+        video: 'video/mp4; codecs="avc1.42001e"',
+        audio: 'audio/mp4; codecs="mp4a.40.2"'
+      }
+    ],
+    'got video and audio mime types and codecs'
+  );
+});
+
+QUnit.test('gets video only mime type and codec', function(assert) {
+  assert.deepEqual(
+    getAudioAndVideoTypes({
+      videoPlaylists: [
+        { resolvedUri: 'manifest1-playlist2' },
+        { resolvedUri: 'manifest2-playlist1' }
+      ],
+      manifestObjects: [{
+        playlists: [{
+          attributes: { CODECS: 'avc1.42001f' },
+          resolvedUri: 'manifest1-playlist1'
+        }, {
+          attributes: { CODECS: 'avc1.42001e' },
+          resolvedUri: 'manifest1-playlist2'
+        }]
+      }, {
+        playlists: [{
+          attributes: { CODECS: 'avc1.42001f' },
+          resolvedUri: 'manifest2-playlist1'
+        }, {
+          attributes: { CODECS: 'avc1.42001e' },
+          resolvedUri: 'manifest2-playlist2'
+        }]
+      }]
+    }),
+    [
+      { video: 'video/mp4; codecs="avc1.42001e"' },
+      { video: 'video/mp4; codecs="avc1.42001f"' }
+    ],
+    'got video mime type and codec'
+  );
+});
+
+QUnit.test('gets audio only mime type and codec', function(assert) {
+  assert.deepEqual(
+    getAudioAndVideoTypes({
+      videoPlaylists: [
+        { resolvedUri: 'manifest1-playlist2' },
+        { resolvedUri: 'manifest2-playlist1' }
+      ],
+      manifestObjects: [{
+        playlists: [{
+          attributes: { CODECS: 'mp4a.40.2' },
+          resolvedUri: 'manifest1-playlist1'
+        }, {
+          attributes: { CODECS: 'mp4a.40.5' },
+          resolvedUri: 'manifest1-playlist2'
+        }]
+      }, {
+        playlists: [{
+          attributes: { CODECS: 'mp4a.40.2' },
+          resolvedUri: 'manifest2-playlist1'
+        }, {
+          attributes: { CODECS: 'mp4a.40.2' },
+          resolvedUri: 'manifest2-playlist2'
+        }]
+      }]
+    }),
+    [
+      { audio: 'audio/mp4; codecs="mp4a.40.5"' },
+      { audio: 'audio/mp4; codecs="mp4a.40.2"' }
+    ],
+    'got audio mime type and codec'
+  );
+});
+
+QUnit.test('gets demuxed video and audio mime types and codecs', function(assert) {
+  const mediaGroups = {
+    AUDIO: {
+      audio: {
+        nonDefault: {
+          autoselect: false,
+          default: false,
+          playlists: [{
+            attributes: { CODECS: 'mp4a.40.2' }
+          }]
+        },
+        default: {
+          autoselect: true,
+          default: true,
+          playlists: [{
+            attributes: { CODECS: 'mp4a.40.5' }
+          }]
+        }
+      }
+    }
+  };
+
+  assert.deepEqual(
+    getAudioAndVideoTypes({
+      videoPlaylists: [
+        { resolvedUri: 'manifest1-playlist2' },
+        { resolvedUri: 'manifest2-playlist1' }
+      ],
+      manifestObjects: [{
+        mediaGroups,
+        playlists: [{
+          attributes: { CODECS: 'avc1.42001e', AUDIO: 'audio' },
+          resolvedUri: 'manifest1-playlist1'
+        }, {
+          attributes: { CODECS: 'avc1.42001f', AUDIO: 'audio' },
+          resolvedUri: 'manifest1-playlist2'
+        }]
+      }, {
+        mediaGroups,
+        playlists: [{
+          attributes: { CODECS: 'avc1.42001e', AUDIO: 'audio' },
+          resolvedUri: 'manifest2-playlist1'
+        }, {
+          attributes: { CODECS: 'avc1.42001f', AUDIO: 'audio' },
+          resolvedUri: 'manifest2-playlist2'
+        }]
+      }]
+    }),
+    [
+      {
+        video: 'video/mp4; codecs="avc1.42001f"',
+        audio: 'audio/mp4; codecs="mp4a.40.5"'
+      },
+      {
+        video: 'video/mp4; codecs="avc1.42001e"',
+        audio: 'audio/mp4; codecs="mp4a.40.5"'
+      }
+    ],
+    'got video and audio mime types and codecs'
+  );
+});

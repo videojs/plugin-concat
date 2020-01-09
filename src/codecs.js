@@ -43,3 +43,68 @@ export const codecsForPlaylists = (manifest) => {
     return acc;
   }, {});
 };
+
+/**
+ * @typedef {Object} AudioAndVideoTypes
+ * @property {String} audio
+ *           Audio MIME type
+ * @property {String} video
+ *           Video MIME type
+ */
+
+/**
+ * Returns an array of AudioAndVideoTypes, where each AudioAndVideoTypes object includes
+ * audio and video MIME types, including codecs.
+ *
+ * videoPlaylists, audioPlaylists, and manifestObjects should match one-to-one, where each
+ * index is associated across the arrays.
+ *
+ * Note that only playlists with master manifests are currently supported, as the master
+ * manifests include codec information.
+ *
+ * @param {Object[]} videoPlaylists
+ *        An array of video playlists
+ * @param {Object[]} audioPlaylists
+ *        An array of audio playlists
+ * @param {Object[]} manifestObjects
+ *        An array of master manifest playlists
+ * @return {AudioAndVideoTypes[]}
+ *        An array of audio and video MIME types with codecs
+ *        @see {@link https://www.w3.org/TR/html51/semantics-embedded-content.html#mime-types|Mime Types}
+ */
+export const getAudioAndVideoTypes = ({
+  videoPlaylists,
+  manifestObjects
+}) => {
+  const audioAndVideoTypes = [];
+
+  for (let i = 0; i < videoPlaylists.length; i++) {
+    const videoPlaylist = videoPlaylists[i];
+    const manifestObject = manifestObjects[i];
+    const playlistToCodecsMap = codecsForPlaylists(manifestObject);
+    const codecs = playlistToCodecsMap[videoPlaylist.resolvedUri];
+
+    // HLS media playlist, or an HLS master without the CODECS attribute attached to
+    // playlists
+    if (!codecs) {
+      audioAndVideoTypes.push(null);
+      continue;
+    }
+
+    const types = {};
+
+    if (codecs.videoCodec) {
+      // container types are fixed because VHS transmuxes to mp4
+      types.video =
+        `video/mp4; codecs="${codecs.videoCodec}${codecs.videoObjectTypeIndicator}"`;
+    }
+
+    if (codecs.audioProfile) {
+      types.audio = `audio/mp4; codecs="mp4a.40.${codecs.audioProfile}"`;
+    }
+
+    audioAndVideoTypes.push(types);
+  }
+
+  return audioAndVideoTypes;
+};
