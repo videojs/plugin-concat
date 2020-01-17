@@ -111,8 +111,8 @@ player.concat({
     }
     console.log(result);
     player.src({
-      src: `data:application/vnd.vhs+json,${JSON.stringify(result.manifestObject)}`,
-      type: 'application/vnd.vhs+json'
+      src: `data:application/vnd.videojs.vhs+json,${JSON.stringify(result.manifestObject)}`,
+      type: 'application/vnd.videojs.vhs+json'
     });
   }
 });
@@ -137,8 +137,8 @@ player.concat({
     }
     console.log(result);
     player.src({
-      src: `data:application/vnd.vhs+json,${JSON.stringify(result.manifestObject)}`,
-      type: 'application/vnd.vhs+json'
+      src: `data:application/vnd.videojs.vhs+json,${JSON.stringify(result.manifestObject)}`,
+      type: 'application/vnd.videojs.vhs+json'
     });
   }
 });
@@ -163,8 +163,8 @@ player.concat({
     }
     console.log(result);
     player.src({
-      src: `data:application/vnd.vhs+json,${JSON.stringify(result.manifestObject)}`,
-      type: 'application/vnd.vhs+json'
+      src: `data:application/vnd.videojs.vhs+json,${JSON.stringify(result.manifestObject)}`,
+      type: 'application/vnd.videojs.vhs+json'
     });
   }
 });
@@ -189,8 +189,8 @@ player.concat({
     }
     console.log(result);
     player.src({
-      src: `data:application/vnd.vhs+json,${JSON.stringify(result.manifestObject)}`,
-      type: 'application/vnd.vhs+json'
+      src: `data:application/vnd.videojs.vhs+json,${JSON.stringify(result.manifestObject)}`,
+      type: 'application/vnd.videojs.vhs+json'
     });
   }
 });
