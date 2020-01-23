@@ -8,6 +8,7 @@ Concatenate videos for playback in a Video.js player
 <!-- DON'T EDIT THIS SECTION, INSTEAD RE-RUN doctoc TO UPDATE -->
 
 
+- [Requirements](#requirements)
 - [Installation](#installation)
 - [Usage](#usage)
   - [`<script>` Tag](#script-tag)
@@ -23,6 +24,10 @@ Concatenate videos for playback in a Video.js player
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+## Requirements
+
+Note that this plugin requires a currently unreleased feature proposed for [VHS](https://github.com/videojs/http-streaming): https://github.com/videojs/http-streaming/pull/716.
+
 ## Installation
 
 ```sh
