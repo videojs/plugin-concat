@@ -6,7 +6,7 @@ import {
 
 QUnit.module('createInitializeMediaKeysFunction');
 
-QUnit.test('return function calls player.eme.initializeMediaKeys', function(assert) {
+QUnit.test('returns function that calls player.eme.initializeMediaKeys', function(assert) {
   assert.expect(1);
 
   const getLicense = () => {};

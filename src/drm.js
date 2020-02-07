@@ -53,6 +53,7 @@ export const createInitializeMediaKeysFunction = ({
  * Returns a function that initializes all key sessions for EME and configures
  * videojs-contrib-eme to retrieve licenses for encrypted content. This function is meant
  * to be called after setting a player source to ensure that the session is associated
+ * with the source.
  *
  * @param {Object[]} videoPlaylists
  *        An array of video playlists

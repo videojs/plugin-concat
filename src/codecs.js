@@ -56,16 +56,14 @@ export const codecsForPlaylists = (manifest) => {
  * Returns an array of AudioAndVideoTypes, where each AudioAndVideoTypes object includes
  * audio and video MIME types, including codecs.
  *
- * videoPlaylists, audioPlaylists, and manifestObjects should match one-to-one, where each
- * index is associated across the arrays.
+ * videoPlaylists and manifestObjects should match one-to-one, where each index is
+ * associated across the arrays.
  *
  * Note that only playlists with master manifests are currently supported, as the master
  * manifests include codec information.
  *
  * @param {Object[]} videoPlaylists
  *        An array of video playlists
- * @param {Object[]} audioPlaylists
- *        An array of audio playlists
  * @param {Object[]} manifestObjects
  *        An array of master manifest playlists
  * @return {AudioAndVideoTypes[]}
