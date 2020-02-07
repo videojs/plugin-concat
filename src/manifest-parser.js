@@ -1,6 +1,7 @@
 import { parse as parseMpd } from 'mpd-parser';
 import { Parser as M3u8Parser } from 'm3u8-parser';
 import { simpleTypeFromSourceType } from '@videojs/vhs-utils/dist/media-types';
+import { forEachMediaGroup } from '@videojs/vhs-utils/dist/media-groups.js';
 import resolveUrl from '@videojs/vhs-utils/dist/resolve-url.js';
 
 /**
@@ -69,32 +70,28 @@ export const addPropertiesToMaster = (master) => {
     }
   }
 
-  const audioGroup = master.mediaGroups.AUDIO;
+  forEachMediaGroup(
+    master,
+    ['AUDIO'],
+    (mediaProperties, mediaType, groupKey, labelKey) => {
+      if (mediaProperties.uri) {
+        mediaProperties.resolvedUri = resolveUrl(master.uri, mediaProperties.uri);
+      }
 
-  if (audioGroup) {
-    for (const groupKey in audioGroup) {
-      for (const labelKey in audioGroup[groupKey]) {
-        const mediaProperties = audioGroup[groupKey][labelKey];
-
-        if (mediaProperties.uri) {
-          mediaProperties.resolvedUri = resolveUrl(master.uri, mediaProperties.uri);
+      if (mediaProperties.playlists) {
+        if (!mediaProperties.playlists[0].resolvedUri) {
+          // For DASH playlists, where the audio playlists are already resolved, a
+          // resolvedUri needs to exist to act as an identifier. Use a unique
+          // combination across and within manifests to prevent collisions.
+          mediaProperties.playlists[0].resolvedUri =
+            `${master.resolvedUri}-audio-placeholder-${groupKey}-${labelKey}`;
         }
-
-        if (mediaProperties.playlists) {
-          if (!mediaProperties.playlists[0].resolvedUri) {
-            // For DASH playlists, where the audio playlists are already resolved, a
-            // resolvedUri needs to exist to act as an identifier. Use a unique
-            // combination across and within manifests to prevent collisions.
-            mediaProperties.playlists[0].resolvedUri =
-              `${master.resolvedUri}-audio-placeholder-${groupKey}-${labelKey}`;
-          }
-          mediaProperties.playlists[0].segments.forEach((segment) => {
-            resolveSegmentUris(segment, master.uri);
-          });
-        }
+        mediaProperties.playlists[0].segments.forEach((segment) => {
+          resolveSegmentUris(segment, master.uri);
+        });
       }
     }
-  }
+  );
 };
 
 /**

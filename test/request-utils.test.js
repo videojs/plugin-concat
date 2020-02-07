@@ -63,8 +63,8 @@ QUnit.test('calls back immediately on error', function(assert) {
   request.respond(500, null, 'error');
 });
 
-QUnit.test('does not call back on success after an error', function(assert) {
-  assert.expect(4);
+QUnit.test('aborts other requests after an error', function(assert) {
+  assert.expect(6);
 
   let callbackCount = 0;
   let request;
@@ -82,29 +82,19 @@ QUnit.test('does not call back on success after an error', function(assert) {
   assert.equal(this.requests.length, 2, 'two requests');
   request = this.requests.shift();
   request.respond(500, null, 'error');
-  this.requests.shift().respond(200, null, 'success');
+  assert.ok(this.requests.shift().aborted, 'aborted other requests');
+  assert.notOk(request.aborted, 'original request not aborted');
   assert.equal(callbackCount, 1, 'only one callback');
 });
 
-QUnit.test('does not call back on error after an error', function(assert) {
-  assert.expect(4);
+QUnit.test('does not call same URL twice', function(assert) {
+  assert.expect(3);
 
-  let callbackCount = 0;
-  let request;
-
-  requestAll(['url1', 'url2'], (err, responses) => {
-    callbackCount++;
-    assert.deepEqual(
-      err,
-      { message: 'Request failed', request },
-      'calls back with error'
-    );
-    assert.notOk(responses, 'no responses object provided');
+  requestAll(['url1', 'url1'], (err, responses) => {
+    assert.notOk(err);
+    assert.equal(responses.url1, 'url1-response', 'correct response');
   });
 
-  assert.equal(this.requests.length, 2, 'two requests');
-  request = this.requests.shift();
-  request.respond(500, null, 'error');
-  this.requests.shift().respond(500, null, 'error');
-  assert.equal(callbackCount, 1, 'only one callback');
+  assert.equal(this.requests.length, 1, 'one request');
+  this.requests.shift().respond(200, null, 'url1-response');
 });

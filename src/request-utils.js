@@ -9,15 +9,20 @@ import videojs from 'video.js';
  *        Callback function with error and object containing url to response text entries
  */
 export const requestAll = (urls, callback) => {
-  let requestsRemaining = urls.length;
+  // remove duplicates
+  urls = urls.filter((element, index, array) => array.indexOf(element) === index);
+
+  let didError = false;
   const responses = {};
+  const pendingRequests = [];
 
   urls.forEach((url) => {
     const request = videojs.xhr(url, (err, response) => {
-      if (requestsRemaining <= 0) {
-        // this case should only be triggered if a previous requested erred
+      if (didError) {
         return;
       }
+
+      pendingRequests.splice(pendingRequests.indexOf(request), 1);
 
       const responseStatusIsSuccess =
         response &&
@@ -34,18 +39,19 @@ export const requestAll = (urls, callback) => {
           message: err ? err.message : 'Request failed',
           request
         });
-        // clear remaining requests to break future callbacks
-        requestsRemaining = 0;
+        didError = true;
+        // abort any pending requests, since one error is enough to fail the entire set
+        pendingRequests.forEach((pendingRequest) => pendingRequest.abort());
         return;
       }
 
-      requestsRemaining--;
-
       responses[url] = request.responseText;
 
-      if (requestsRemaining === 0) {
+      if (Object.keys(responses).length === urls.length) {
         callback(null, responses);
       }
     });
+
+    pendingRequests.push(request);
   });
 };
