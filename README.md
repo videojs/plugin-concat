@@ -9,6 +9,7 @@ Concatenate videos for playback in a Video.js player
 
 
 - [Requirements](#requirements)
+  - [Test Page](#test-page)
 - [Installation](#installation)
 - [Usage](#usage)
   - [`<script>` Tag](#script-tag)
@@ -29,7 +30,23 @@ Concatenate videos for playback in a Video.js player
 
 ## Requirements
 
-Note that this plugin requires a currently unreleased feature proposed for [VHS](https://github.com/videojs/http-streaming): https://github.com/videojs/http-streaming/pull/716.
+Note that this plugin requires the master branch of [VHS].
+
+### Test Page
+
+To use the test page, clone [VHS], run:
+
+```sh
+npm install
+npm run build
+npm link
+```
+
+Then in the videojs-concat directory, run:
+
+```sh
+npm link @videojs/http-streaming
+```
 
 ## Installation
 
@@ -254,3 +271,4 @@ Apache-2.0. Copyright (c) Brightcove, Inc
 
 [videojs]: http://videojs.com/
 [videojs-contrib-eme]: https://github.com/videojs/videojs-contrib-eme
+[VHS]: https://github.com/videojs/http-streaming

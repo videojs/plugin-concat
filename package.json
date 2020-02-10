@@ -85,10 +85,12 @@
   },
   "devDependencies": {
     "@videojs/generator-helpers": "~1.0.0",
+    "@videojs/http-streaming": "git+https://github.com/videojs/http-streaming.git",
     "jsdoc": "BrandonOCasey/jsdoc#feat/plugin-from-cli",
     "karma": "^4.0.0",
     "rollup": "^1.10.0",
     "sinon": "^7.2.2",
+    "videojs-contrib-eme": "^3.5.6",
     "videojs-generate-karma-config": "~5.2.0",
     "videojs-generate-rollup-config": "~3.1.0",
     "videojs-generator-verify": "~1.2.0",
