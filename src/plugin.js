@@ -6,6 +6,41 @@ import { concatenateVideos } from './concatenate';
 const registerPlugin = videojs.registerPlugin || videojs.plugin;
 
 /**
+ * @typedef {Object} KeySystems
+ *
+ * Manifest's DRM configuration for https://github.com/videojs/videojs-contrib-eme
+ *
+ * Assumptions for DRMed content: each video/audio playlist will use the same key system
+ * configuration, and won't have different PSSH values within a playlist.
+ */
+
+/**
+ * @typedef {Object} ManifestConfig
+ * @property {string} url
+ *           URL to the manifest
+ * @property {string} mimeType
+ *           Mime type of the manifest
+ *           @see {@link https://www.w3.org/TR/html51/semantics-embedded-content.html#mime-types|Mime Types}
+ * @property {KeySystems} keySystems
+ *           Manifest's DRM configuration object
+ */
+
+/**
+ * @callback initializeKeySystems
+ * @param {Object} player
+ *        The video.js player object
+ */
+
+/**
+ * @typedef {Object} ConcatenationResult
+ * @property {Object} manifestObject
+ *           Concatenated manifest object
+ * @property {initializeKeySystems} [initializeKeySystems]
+ *           Function to call after setting source to initialize EME for DRMed sources if
+ *           DRM is required for any of the sources
+ */
+
+/**
  * Calls back with a single rendition VHS formatted master playlist object given a list of
  * URLs and their mime types as well as a target vertical resolution.
  *
@@ -14,6 +49,10 @@ const registerPlugin = videojs.registerPlugin || videojs.plugin;
  * This function will select the closest rendition (absolute value difference) to the
  * target vertical resolution. If resolution information is not available as part of the
  * manifest, then it will fall back to the INITIAL_BANDWIDTH config value from VHS.
+ *
+ * If any of the sources are encrypted with a supported CDM, and keySystems are provided
+ * for the source, then the result will include a function to call to initialize
+ * videojs-contrib-eme for playback of the encrypted sources.
  *
  * @param {Object} config
  *        Object containing arguments

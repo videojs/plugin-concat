@@ -9,6 +9,7 @@ Concatenate videos for playback in a Video.js player
 
 
 - [Requirements](#requirements)
+  - [Test Page](#test-page)
 - [Installation](#installation)
 - [Usage](#usage)
   - [`<script>` Tag](#script-tag)
@@ -16,17 +17,36 @@ Concatenate videos for playback in a Video.js player
   - [RequireJS/AMD](#requirejsamd)
 - [Method](#method)
 - [Limitations](#limitations)
+- [DRM](#drm)
 - [Examples](#examples)
   - [Two of the same DASH source](#two-of-the-same-dash-source)
   - [Two of the same HLS source](#two-of-the-same-hls-source)
   - [Two of the same demuxed HLS source](#two-of-the-same-demuxed-hls-source)
   - [Demuxed HLS and DASH](#demuxed-hls-and-dash)
+  - [HLS Widevine and DASH Widevine](#hls-widevine-and-dash-widevine)
 - [License](#license)
 
 <!-- END doctoc generated TOC please keep comment here to allow auto update -->
+
 ## Requirements
 
-Note that this plugin requires a currently unreleased feature proposed for [VHS](https://github.com/videojs/http-streaming): https://github.com/videojs/http-streaming/pull/716.
+Note that this plugin requires the master branch of [VHS].
+
+### Test Page
+
+To use the test page, clone [VHS], run:
+
+```sh
+npm install
+npm run build
+npm link
+```
+
+Then in the videojs-concat directory, run:
+
+```sh
+npm link @videojs/http-streaming
+```
 
 ## Installation
 
@@ -94,6 +114,14 @@ To use videojs-concat, all that needs to be done is to call the function `videoj
 * Only one rendition is used per source.
 * Alternate audio is not supported (except demuxed with default audio playlists).
 * WebVTT subtitle playlists are not supported.
+
+## DRM
+
+DRM is supported via [videojs-contrib-eme].
+
+To use DRM encrypted sources, add `keySystems` information to each encrypted manifest object in the same way as would be done for [videojs-contrib-eme]. See [the README](https://github.com/videojs/videojs-contrib-eme#setting-options-per-source) for details.
+
+Normally, licenses are requested for a video when segments are appended to the browser and the browser needs to decrypt the video. However, with multiple videos being concatenated, determining which key system information to use for the license request becomes challenging. Therefore, videojs-concat returns a function, `initializeKeySystems(player)` which sets up all of the key systems at once. `initializeKeySystems(player)` should be called after setting the source on the player. See [HLS Widevine and DASH Widevine] for an example.
 
 ## Examples
 
@@ -201,9 +229,46 @@ player.concat({
 });
 ```
 
+### HLS Widevine and DASH Widevine
+
+```js
+// initialize videojs-conrib-eme if it hasn't been initialized already
+player.eme();
+player.concat({
+  manifests: [{
+    url: 'https://amssamples.streaming.mediaservices.windows.net/622b189f-ec39-43f2-93a2-201ac4e31ce1/BigBuckBunny.ism/manifest(format=mpd-time-csf)',
+    mimeType: 'application/dash+xml',
+    keySystems: {
+      'com.widevine.alpha': 'https://amssamples.keydelivery.mediaservices.windows.net/Widevine/?KID=1ab45440-532c-4399-94dc-5c5ad9584bac'
+    }
+  }, {
+    url: 'https://storage.googleapis.com/shaka-demo-assets/angel-one-widevine-hls/hls.m3u8',
+    mimeType: 'application/x-mpegURL',
+    keySystems: {
+      'com.widevine.alpha': 'https://cwip-shaka-proxy.appspot.com/no_auth'
+    }
+  }],
+  targetVerticalResolution: 720,
+  callback: (err, result) => {
+    if (err) {
+      console.error(err);
+      return;
+    }
+    console.log(result);
+    player.src({
+      src: `data:application/vnd.videojs.vhs+json,${JSON.stringify(result.manifestObject)}`,
+      type: 'application/vnd.videojs.vhs+json'
+    });
+    result.initializeKeySystems(player);
+  }
+});
+```
+
 ## License
 
 Apache-2.0. Copyright (c) Brightcove, Inc
 
 
 [videojs]: http://videojs.com/
+[videojs-contrib-eme]: https://github.com/videojs/videojs-contrib-eme
+[VHS]: https://github.com/videojs/http-streaming

@@ -11,6 +11,12 @@ import {
   combinePlaylists,
   constructMasterManifest
 } from './generators';
+import {
+  getAudioAndVideoTypes
+} from './codecs';
+import {
+  createInitializeKeySystemsFunction
+} from './drm';
 
 /**
  * Requests and parses any unresolved playlists and calls back with the result.
@@ -157,8 +163,14 @@ const concatenateManifests = ({ manifests, targetVerticalResolution, callback })
         return;
       }
 
+      // Copy over the necessary elements from the resolved playlists to the playlist
+      // objects saved before the call to resolve.
       allPlaylists.forEach((playlist) => {
-        playlist.segments = resolvedPlaylistsMap[playlist.resolvedUri].segments;
+        const resolvedPlaylist = resolvedPlaylistsMap[playlist.resolvedUri];
+
+        playlist.segments = resolvedPlaylist.segments;
+        // used for CDM specific settings for DRM/EME
+        playlist.contentProtection = resolvedPlaylist.contentProtection;
       });
 
       const combinedVideoPlaylist = combinePlaylists({ playlists: videoPlaylists });
@@ -171,20 +183,26 @@ const concatenateManifests = ({ manifests, targetVerticalResolution, callback })
         audioPlaylist: combinedAudioPlaylist
       });
       const concatenationResult = { manifestObject };
+      const audioAndVideoTypes = getAudioAndVideoTypes({
+        videoPlaylists,
+        manifestObjects
+      });
+      // function used for DRM, to initialize EME via videojs-contrib-eme
+      const initializeKeySystemsFunction = createInitializeKeySystemsFunction({
+        videoPlaylists,
+        audioPlaylists,
+        audioAndVideoTypes,
+        keySystems: manifests.map((manifest) => manifest.keySystems)
+      });
+
+      if (initializeKeySystemsFunction) {
+        concatenationResult.initializeKeySystems = initializeKeySystemsFunction;
+      }
 
       callback(null, concatenationResult);
     }
   });
 };
-
-/**
- * @typedef {Object} ManifestConfig
- * @property {string} url
- *           URL to the manifest
- * @property {string} mimeType
- *           Mime type of the manifest
- *           @see {@link https://www.w3.org/TR/html51/semantics-embedded-content.html#mime-types|Mime Types}
- */
 
 /**
  * Returns an error message if there's an issue with the user provided manifest objects,
@@ -214,12 +232,6 @@ export const getProvidedManifestsError = (manifests) => {
 
   return null;
 };
-
-/**
- * @typedef {Object} ConcatenationResult
- * @property {Object} manifestObject
- *           Concatenated manifest object
- */
 
 /**
  * Calls back with a single rendition VHS formatted master playlist object given a list of
@@ -260,7 +272,8 @@ export const concatenateVideos = ({ manifests, targetVerticalResolution, callbac
       return {
         url: manifestObject.url,
         manifestString: responses[manifestObject.url],
-        mimeType: manifestObject.mimeType
+        mimeType: manifestObject.mimeType,
+        keySystems: manifestObject.keySystems
       };
     });
 
