@@ -42,7 +42,7 @@ npm run build
 npm link
 ```
 
-Then in the videojs-concat directory, run:
+Then in the plugin-concat directory, run:
 
 ```sh
 npm link @videojs/http-streaming
@@ -51,7 +51,7 @@ npm link @videojs/http-streaming
 ## Installation
 
 ```sh
-npm install --save videojs-concat
+npm install --save @videojs/plugin-concat
 ```
 
 ## Usage
@@ -64,7 +64,7 @@ This is the simplest case. Get the script in whatever way you prefer and include
 
 ```html
 <script src="//path/to/video.min.js"></script>
-<script src="//path/to/videojs-concat.min.js"></script>
+<script src="//path/to/plugin-concat.min.js"></script>
 <script>
   var player = videojs('my-video');
 
@@ -82,7 +82,7 @@ var videojs = require('video.js');
 // The actual plugin function is exported by this module, but it is also
 // attached to the `Player.prototype`; so, there is no need to assign it
 // to a variable.
-require('videojs-concat');
+require('@videojs/plugin-concat');
 
 var player = videojs('my-video');
 
@@ -94,7 +94,7 @@ player.concat();
 When using with RequireJS (or another AMD library), get the script in whatever way you prefer and `require` the plugin as you normally would:
 
 ```js
-require(['video.js', 'videojs-concat'], function(videojs) {
+require(['video.js', '@videojs/plugin-concat'], function(videojs) {
   var player = videojs('my-video');
 
   player.concat(options);
