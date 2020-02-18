@@ -64,7 +64,7 @@ This is the simplest case. Get the script in whatever way you prefer and include
 
 ```html
 <script src="//path/to/video.min.js"></script>
-<script src="//path/to/plugin-concat.min.js"></script>
+<script src="//path/to/videojs-plugin-concat.min.js"></script>
 <script>
   var player = videojs('my-video');
 
