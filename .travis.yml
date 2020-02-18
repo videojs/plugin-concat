@@ -11,5 +11,10 @@ after_script:
 addons:
   firefox: latest
   chrome: stable
+  apt:
+    update: true
+    # libav-tools is needed by firefox for h.264 support on linux
+    packages:
+      libav-tools
 services:
   - xvfb
