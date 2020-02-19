@@ -1,9 +1,9 @@
 {
-  "name": "videojs-concat",
+  "name": "@videojs/plugin-concat",
   "version": "0.0.0",
   "description": "Concatenate videos for playback in a Video.js player",
-  "main": "dist/videojs-concat.cjs.js",
-  "module": "dist/videojs-concat.es.js",
+  "main": "dist/videojs-plugin-concat.cjs.js",
+  "module": "dist/videojs-plugin-concat.es.js",
   "generator-videojs-plugin": {
     "version": "7.6.3"
   },
