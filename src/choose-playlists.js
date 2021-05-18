@@ -39,8 +39,8 @@ export const chooseVideoPlaylists = (manifestsPlaylists, targetVerticalResolutio
           return playlist;
         }
 
-        if (Math.abs(playlist.attributes.RESOLUTION - targetVerticalResolution) <
-            Math.abs(acc.attributes.RESOLUTION - targetVerticalResolution)) {
+        if (Math.abs(playlist.attributes.RESOLUTION.height - targetVerticalResolution) <
+            Math.abs(acc.attributes.RESOLUTION.height - targetVerticalResolution)) {
           return playlist;
         }
         return acc;

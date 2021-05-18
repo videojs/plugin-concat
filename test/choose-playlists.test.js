@@ -8,9 +8,9 @@ import {
 QUnit.module('chooseVideoPlaylists');
 
 QUnit.test('chooses video playlists by target vertical resolution', function(assert) {
-  const playlist1 = { attributes: { RESOLUTION: 1 } };
-  const playlist2 = { attributes: { RESOLUTION: 719 } };
-  const playlist3 = { attributes: { RESOLUTION: 722 } };
+  const playlist1 = { attributes: { RESOLUTION: {width: 2, height: 1} } };
+  const playlist2 = { attributes: { RESOLUTION: {width: 1000, height: 719}}};
+  const playlist3 = { attributes: { RESOLUTION: {width: 1000, height: 722 }} };
 
   assert.deepEqual(
     chooseVideoPlaylists(
